@@ -2,6 +2,7 @@ package com.project.smartbuy.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Product extends BaseEntity {
 
   @Id
@@ -29,5 +31,5 @@ public class Product extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "category_id")
-  private Long categoryId;
+  private Category category;
 }

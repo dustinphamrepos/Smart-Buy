@@ -1,14 +1,14 @@
 package com.project.smartbuy.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
 @Table(name = "users")
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -43,7 +43,4 @@ public class User extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "role_id")
   private Role role;
-
-  public void setRole(Role role) {
-  }
 }

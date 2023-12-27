@@ -1,7 +1,12 @@
 package com.project.smartbuy.controllers;
 
 import com.project.smartbuy.dtos.ProductDTO;
+import com.project.smartbuy.dtos.ProductImageDTO;
+import com.project.smartbuy.models.Product;
+import com.project.smartbuy.models.ProductImage;
+import com.project.smartbuy.services.IProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -24,7 +29,10 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("${api.prefix}/products")
+@RequiredArgsConstructor
 public class ProductController {
+
+  private final IProductService productService;
   @GetMapping("")
   public ResponseEntity<String> getProducts(
     @RequestParam("page") int page,
@@ -50,6 +58,9 @@ public class ProductController {
           .toList();
         return ResponseEntity.badRequest().body(errorMessages);
       }
+
+      Product newProduct = productService.createProduct(productDTO);
+
       List<MultipartFile> files = productDTO.getFiles();
       files = files == null ? new ArrayList<MultipartFile>() : files;
       for (MultipartFile file : files) {
@@ -67,6 +78,9 @@ public class ProductController {
         }
 
         String filename = storeFile(file);
+        ProductImage newProductImage = productService.createProductImage(newProduct.getId(), ProductImageDTO.builder()
+          .imageUrl(filename)
+          .build());
       }
       return ResponseEntity.ok("Product created successfully.");
     }

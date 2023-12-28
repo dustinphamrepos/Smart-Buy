@@ -63,6 +63,12 @@ CREATE TABLE products (
   FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
+ALTER TABLE products
+CHANGE COLUMN create_at created_at DATETIME;
+
+ALTER TABLE products
+MODIFY COLUMN updated_at DATETIME;
+
 CREATE TABLE product_images (
   id INT PRIMARY KEY AUTO_INCREMENT,
   product_id INT,

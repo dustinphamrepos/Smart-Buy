@@ -46,10 +46,8 @@ public class ProductController {
     return ResponseEntity.ok("Product with ID: " + productId);
   }
 
-  @PostMapping(value = "", consumes = MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<?> createProduct(
-    @Valid @ModelAttribute ProductDTO productDTO,
-    BindingResult result) {
+  @PostMapping("")
+  public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO, BindingResult result) {
     try {
       if (result.hasErrors()) {
         List<String> errorMessages = result.getFieldErrors()
@@ -60,36 +58,56 @@ public class ProductController {
       }
 
       Product newProduct = productService.createProduct(productDTO);
-
-      List<MultipartFile> files = productDTO.getFiles();
-      files = files == null ? new ArrayList<MultipartFile>() : files;
-      for (MultipartFile file : files) {
-        if (file.getSize() == 0) {
-          continue;
-        }
-        if (file.getSize() > 10 * 1024 * 1024) {
-          //throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "File is too large!");
-          return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File is too large! Maximum size is 10MB");
-        }
-
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-          return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File must be an image!");
-        }
-
-        String filename = storeFile(file);
-        ProductImage newProductImage = productService.createProductImage(newProduct.getId(), ProductImageDTO.builder()
-          .imageUrl(filename)
-          .build());
-      }
-      return ResponseEntity.ok("Product created successfully.");
+      return ResponseEntity.ok(newProduct);
     }
     catch (Exception e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
   }
 
+  @PostMapping(value = "uploads/{id}", consumes = MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> uploadImages(
+    @PathVariable("id") Long productId,
+    @ModelAttribute("files") List<MultipartFile> files
+  ) throws Exception {
+    Product existingProduct = productService.getProductById(productId);
+    files = files == null ? new ArrayList<MultipartFile>() : files;
+    if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+      return ResponseEntity.badRequest().body(String.format("You only upload maximum %d images.", ProductImage.MAXIMUM_IMAGES_PER_PRODUCT));
+    }
+    List<ProductImage> productImages = new ArrayList<>();
+    for (MultipartFile file : files) {
+      if (file.getSize() == 0) {
+        continue;
+      }
+      if (file.getSize() > 10 * 1024 * 1024) {
+        //throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "File is too large!");
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File is too large! Maximum size is 10MB");
+      }
+
+      String contentType = file.getContentType();
+      if (contentType == null || !contentType.startsWith("image/")) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File must be an image!");
+      }
+
+      String filename = storeFile(file);
+      ProductImage newProductImage = productService.createProductImage(productId, ProductImageDTO.builder()
+        .imageUrl(filename)
+        .build());
+      productImages.add(newProductImage);
+    }
+    return ResponseEntity.ok().body(productImages);
+  }
+
+  private boolean isImageFile(MultipartFile file) {
+    String contentType = file.getContentType();
+    return contentType != null && contentType.startsWith("image/");
+  }
+
   private String storeFile(MultipartFile file) throws IOException {
+    if (!isImageFile(file) || file.getOriginalFilename() == null) {
+      throw new IOException("Invalid image format.");
+    }
     String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
     String uniqueFilename = randomUUID().toString() + "_" + filename;
     Path uploadDir = Paths.get("uploads");
@@ -100,14 +118,6 @@ public class ProductController {
     Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
     return uniqueFilename;
   }
-
-//  {
-//    "name": "ipad 2025",
-//    "price": 999,
-//    "thumbnail": "",
-//    "description": "This is the best new gen ipad.",
-//    "category_id": "1"
-//  }
 
   @DeleteMapping("/{id}")
   public  ResponseEntity<String> deleteProduct(@PathVariable("id") Long productId) {

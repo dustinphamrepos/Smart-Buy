@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
@@ -26,5 +28,5 @@ public class ProductDTO {
   @JsonProperty("category_id")
   private Long categoryId;
 
-  private List<MultipartFile> files;
+  //private List<MultipartFile> files;
 }

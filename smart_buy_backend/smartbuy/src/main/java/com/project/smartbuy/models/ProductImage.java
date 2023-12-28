@@ -3,7 +3,7 @@ package com.project.smartbuy.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "products")
+@Table(name = "product_images")
 @Entity
 @Data
 @Getter
@@ -12,6 +12,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ProductImage {
+
+  public static final int MAXIMUM_IMAGES_PER_PRODUCT = 5;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

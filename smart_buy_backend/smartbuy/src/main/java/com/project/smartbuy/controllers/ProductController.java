@@ -4,9 +4,14 @@ import com.project.smartbuy.dtos.ProductDTO;
 import com.project.smartbuy.dtos.ProductImageDTO;
 import com.project.smartbuy.models.Product;
 import com.project.smartbuy.models.ProductImage;
+import com.project.smartbuy.responses.ProductListResponse;
+import com.project.smartbuy.responses.ProductResponse;
 import com.project.smartbuy.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -34,11 +39,21 @@ public class ProductController {
 
   private final IProductService productService;
   @GetMapping("")
-  public ResponseEntity<String> getProducts(
+  public ResponseEntity<ProductListResponse> getProducts(
     @RequestParam("page") int page,
     @RequestParam("limit") int limit
   ) {
-    return ResponseEntity.ok("getProducts here" + page + limit);
+    //create pageRequest from page and limit
+    PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+    Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
+
+    //get the total number of pages
+    int totalPages = productPage.getTotalPages();
+    List<ProductResponse> products = productPage.getContent();
+    return ResponseEntity.ok(ProductListResponse.builder()
+      .products(products)
+      .totalPages(totalPages)
+      .build());
   }
 
   @GetMapping("/{id}")

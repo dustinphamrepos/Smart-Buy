@@ -10,6 +10,7 @@ import com.project.smartbuy.models.ProductImage;
 import com.project.smartbuy.repositories.CategoryRepository;
 import com.project.smartbuy.repositories.ProductImageRepository;
 import com.project.smartbuy.repositories.ProductRepository;
+import com.project.smartbuy.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,9 +46,20 @@ public class ProductService implements IProductService {
   }
 
   @Override
-  public Page<Product> getAllProducts(PageRequest pageRequest) {
+  public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
     //get product list by page and limit
-    return productRepository.findAll(pageRequest);
+    return productRepository.findAll(pageRequest).map(product -> {
+      ProductResponse productResponse = ProductResponse.builder()
+        .name(product.getName())
+        .price(product.getPrice())
+        .thumbnail(product.getThumbnail())
+        .description(product.getDescription())
+        .categoryId(product.getCategory().getId())
+        .build();
+      productResponse.setCreatedAt(product.getCreatedAt());
+      productResponse.setUpdatedAt(product.getUpdatedAt());
+      return productResponse;
+    });
   }
 
   @Override

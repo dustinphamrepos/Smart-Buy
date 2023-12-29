@@ -17,6 +17,7 @@ CREATE TABLE users (
 );
 
 ALTER TABLE users ADD COLUMN role_id INT;
+ALTER TABLE users CHANGE COLUMN create_at created_at DATETIME;
 
 CREATE TABLE roles (
   id INT PRIMARY KEY,

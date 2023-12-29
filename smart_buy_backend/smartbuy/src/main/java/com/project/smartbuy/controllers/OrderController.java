@@ -2,7 +2,10 @@ package com.project.smartbuy.controllers;
 
 
 import com.project.smartbuy.dtos.OrderDTO;
+import com.project.smartbuy.responses.OrderResponse;
+import com.project.smartbuy.services.IOrderService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -12,7 +15,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${api.prefix}/orders")
+@RequiredArgsConstructor
 public class OrderController {
+  private final IOrderService orderService;
   @PostMapping("")
   public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDTO orderDTO, BindingResult result) {
     try {
@@ -23,7 +28,8 @@ public class OrderController {
           .toList();
         return ResponseEntity.badRequest().body(errorMessages);
       }
-      return ResponseEntity.ok("CreateOrder successfully.");
+      OrderResponse orderResponse = orderService.createOrder(orderDTO);
+      return ResponseEntity.ok(orderResponse);
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }

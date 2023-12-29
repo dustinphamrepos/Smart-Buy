@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -41,14 +41,14 @@ public class Order {
   private String note;
 
   @Column(name = "order_date")
-  private LocalDateTime orderDate;
+  private Date orderDate;
 
   @Column(name = "status")
   private String status;
 
   @Column(name = "total_money")
   @Min(value = 0, message = "Total money must be >= 0.")
-  private Integer totalMoney;
+  private Float totalMoney;
 
   @Column(name = "shipping_method", length = 100)
   private String shippingMethod;
@@ -57,7 +57,7 @@ public class Order {
   private String shippingAddress;
 
   @Column(name = "shipping_date")
-  private Date shippingDate;
+  private LocalDate shippingDate;
 
   @Column(name = "tracking_number", length = 100)
   private String trackingNumber;

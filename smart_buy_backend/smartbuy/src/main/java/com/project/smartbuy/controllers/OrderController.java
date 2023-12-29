@@ -20,7 +20,7 @@ import java.util.List;
 public class OrderController {
   private final IOrderService orderService;
   @PostMapping("")
-  // POST http://localhost:8088/api/orders
+  // POST http://localhost:8088/apic/orders
   public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDTO orderDTO, BindingResult result) {
     try {
       if (result.hasErrors()) {
@@ -38,7 +38,7 @@ public class OrderController {
   }
 
   @GetMapping("/user/{user_id}")
-  // GET http://localhost:8088/api/orders/user/6
+  // GET http://localhost:8088/api/v1/orders/user/6
   public ResponseEntity<?> getOrdersByUserId(@Valid @PathVariable("user_id") Long user_id) {
     try {
       List<OrderResponse> orderResponses = orderService.findByUserId(user_id);
@@ -49,7 +49,7 @@ public class OrderController {
   }
 
   @GetMapping("/{id}")
-  // GET http://localhost:8088/api/orders/2
+  // GET http://localhost:8088/api/v1/orders/2
   public ResponseEntity<?> getOrder(@Valid @PathVariable("id") Long orderId) {
     try {
       OrderResponse orderResponse = orderService.getOrder(orderId);
@@ -60,7 +60,7 @@ public class OrderController {
   }
 
   @PutMapping("/{id}")
-  // PUT http://localhost:8088/api/orders/6
+  // PUT http://localhost:8088/api/v1/orders/6
   public ResponseEntity<?> updateOrder (@Valid @PathVariable Long id, @Valid @RequestBody OrderDTO orderDTO) {
     try {
       OrderResponse orderResponse = orderService.updateOrder(id, orderDTO);
@@ -71,7 +71,7 @@ public class OrderController {
   }
 
   @DeleteMapping("/{id}")
-  // DELETE http://localhost:8088/api/orders/6
+  // DELETE http://localhost:8088/api/v1/orders/6
   public ResponseEntity<?> deleteOrder (@Valid @PathVariable Long id) throws DataNotFoundException {
     orderService.deleteOrder(id);
     return ResponseEntity.ok(String.format("Order with ID = %d deleted successfully.", id));

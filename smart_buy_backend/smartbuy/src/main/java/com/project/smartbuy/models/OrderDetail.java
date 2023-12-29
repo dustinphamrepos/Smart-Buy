@@ -33,11 +33,11 @@ public class OrderDetail {
 
   @Column(name = "number_of_products", nullable = false)
   @Min(value = 0, message = "number of products must be > 0.")
-  private Integer numberOfProducts;
+  private int numberOfProducts;
 
   @Column(name = "total_money", nullable = false)
   @Min(value = 0, message = "Total money must be >= 0.")
-  private Integer totalMoney;
+  private Float totalMoney;
 
   private String color;
 }

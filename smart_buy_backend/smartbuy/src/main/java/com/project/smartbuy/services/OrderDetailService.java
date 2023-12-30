@@ -83,9 +83,9 @@ public class OrderDetailService implements IOrderDetailService{
       existingOrderDetail.setPrice(orderDetailDTO.getPrice());
     }
 
+    //No need to check because the data type is int
     existingOrderDetail.setNumberOfProducts(orderDetailDTO.getNumberOfProducts());
 
-    //No need to check because the data type is int
     if (orderDetailDTO.getTotalMoney() != null) {
       existingOrderDetail.setTotalMoney(orderDetailDTO.getTotalMoney());
     }

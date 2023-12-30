@@ -1,6 +1,7 @@
 package com.project.smartbuy.controllers;
 
 import com.project.smartbuy.dtos.*;
+import com.project.smartbuy.exceptions.DataNotFoundException;
 import com.project.smartbuy.services.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +42,9 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+  public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO) throws DataNotFoundException {
     //Check login information and generate token
-    String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
+    String token = String.valueOf(userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword()));
     //return token
     return ResponseEntity.ok(token);
   }

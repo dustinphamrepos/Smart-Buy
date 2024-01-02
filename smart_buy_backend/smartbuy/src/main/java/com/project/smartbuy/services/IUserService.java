@@ -6,5 +6,5 @@ import com.project.smartbuy.models.User;
 
 public interface IUserService {
   User createUser(UserDTO userDTO) throws DataNotFoundException;
-  String login(String phoneNumber, String password) throws DataNotFoundException;
+  String login(String phoneNumber, String password) throws Exception;
 }

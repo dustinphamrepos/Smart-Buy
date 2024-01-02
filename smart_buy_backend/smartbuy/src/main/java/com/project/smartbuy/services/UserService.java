@@ -62,7 +62,7 @@ public class UserService implements IUserService{
 
   //login user
   @Override
-  public String login(String phoneNumber, String password) throws DataNotFoundException {
+  public String login(String phoneNumber, String password) throws Exception {
     Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
     if (optionalUser.isEmpty()) {
       throw new DataNotFoundException("Invalid phone number or password.");
@@ -77,8 +77,9 @@ public class UserService implements IUserService{
     }
 
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-      phoneNumber, password
+      phoneNumber, password, existingUser.getAuthorities()
     );
+
     // authenticate with Java Spring Security
     authenticationManager.authenticate(authenticationToken);
     return jwtTokenUtil.generateToken(existingUser);

@@ -2,7 +2,9 @@ package com.project.smartbuy.controllers;
 
 import com.project.smartbuy.dtos.*;
 import com.project.smartbuy.exceptions.DataNotFoundException;
+import com.project.smartbuy.models.User;
 import com.project.smartbuy.services.IUserService;
+import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,8 +35,8 @@ public class UserController {
       if(!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
         return ResponseEntity.badRequest().body("Password does not match!");
       }
-      userService.createUser(userDTO);
-      return ResponseEntity.ok("Register successfully.");
+      User user = userService.createUser(userDTO);
+      return ResponseEntity.ok(user);
     }
     catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -42,10 +44,13 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO) throws DataNotFoundException {
-    //Check login information and generate token
-    String token = String.valueOf(userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword()));
-    //return token
-    return ResponseEntity.ok(token);
+  public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+    //Check login information and generate token\
+    try {
+      String token = String.valueOf(userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword()));
+      return ResponseEntity.ok(token);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }

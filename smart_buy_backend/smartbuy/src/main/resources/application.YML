@@ -23,4 +23,4 @@ api:
 jwt:
   expiration: 2592000
     #30 days = 30 * 24 *24 *60
-  secretKey: I have a dream
+  secretKey: SKFKMnjkBPwn4qRI3b96qgFLWqPzw0Q3tqVEOIHPxGg=

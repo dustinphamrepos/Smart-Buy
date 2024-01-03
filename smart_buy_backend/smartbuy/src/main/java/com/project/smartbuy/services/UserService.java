@@ -3,6 +3,7 @@ package com.project.smartbuy.services;
 import com.project.smartbuy.components.JwtTokenUtil;
 import com.project.smartbuy.dtos.UserDTO;
 import com.project.smartbuy.exceptions.DataNotFoundException;
+import com.project.smartbuy.exceptions.PermissionDenyException;
 import com.project.smartbuy.models.Role;
 import com.project.smartbuy.models.User;
 import com.project.smartbuy.repositories.RoleRepository;
@@ -33,13 +34,16 @@ public class UserService implements IUserService{
 
   // register user
   @Override
-  public User createUser(UserDTO userDTO) throws DataNotFoundException {
+  public User createUser(UserDTO userDTO) throws Exception {
     String phoneNumber = userDTO.getPhoneNumber();
     if (userRepository.existsByPhoneNumber(phoneNumber)) {
       throw new DataIntegrityViolationException("Phone number already exists.");
     }
     Role existingRole = roleRepository.findById(userDTO.getRoleId())
       .orElseThrow(() -> new DataNotFoundException("Role not found."));
+    if (existingRole.getName().toUpperCase().equals(Role.ADMIN)) {
+      throw new PermissionDenyException("You cannot register a admin account.");
+    }
     User newUser = User.builder()
       .fullName(userDTO.getFullName())
       .phoneNumber(userDTO.getPhoneNumber())

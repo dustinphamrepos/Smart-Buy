@@ -1,6 +1,7 @@
 package com.project.smartbuy.configurations;
 
 import com.project.smartbuy.filters.JwtTokenFilter;
+import com.project.smartbuy.models.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,12 +33,28 @@ public class WebSecurityConfig {
             String.format("%s/users/login", apiPrefix)
             )
           .permitAll()
-          .requestMatchers(POST, String.format("%s/orders/**", apiPrefix)).hasRole("USER")
-          .requestMatchers(GET, String.format("%s/orders/**", apiPrefix)).hasAnyRole("USER", "ADMIN")
-          .requestMatchers(PUT, String.format("%s/orders/**", apiPrefix)).hasRole("ADMIN")
-          .requestMatchers(DELETE, String.format("%s/orders/**", apiPrefix)).hasRole("ADMIN")
-          .anyRequest()
-          .authenticated();
+
+          .requestMatchers(GET, String.format("%s/categories?**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
+          .requestMatchers(POST, String.format("%s/categories/**", apiPrefix)).hasRole(Role.ADMIN)
+          .requestMatchers(PUT, String.format("%s/categories/**", apiPrefix)).hasRole(Role.ADMIN)
+          .requestMatchers(DELETE, String.format("%s/categories/**", apiPrefix)).hasRole(Role.ADMIN)
+
+          .requestMatchers(GET, String.format("%s/products/**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
+          .requestMatchers(POST, String.format("%s/products/**", apiPrefix)).hasRole(Role.ADMIN)
+          .requestMatchers(PUT, String.format("%s/products/**", apiPrefix)).hasRole(Role.ADMIN)
+          .requestMatchers(DELETE, String.format("%s/products/**", apiPrefix)).hasRole(Role.ADMIN)
+
+          .requestMatchers(GET, String.format("%s/orders/**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
+          .requestMatchers(POST, String.format("%s/orders/**", apiPrefix)).hasRole(Role.USER)
+          .requestMatchers(PUT, String.format("%s/orders/**", apiPrefix)).hasRole(Role.ADMIN)
+          .requestMatchers(DELETE, String.format("%s/orders/**", apiPrefix)).hasRole(Role.ADMIN)
+
+          .requestMatchers(GET, String.format("%s/order_details/**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
+          .requestMatchers(POST, String.format("%s/order_details/**", apiPrefix)).hasRole(Role.USER)
+          .requestMatchers(PUT, String.format("%s/order_details/**", apiPrefix)).hasRole(Role.ADMIN)
+          .requestMatchers(DELETE, String.format("%s/order_details/**", apiPrefix)).hasRole(Role.ADMIN)
+
+          .anyRequest().authenticated();
       })
       .build();
   }

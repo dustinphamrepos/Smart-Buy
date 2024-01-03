@@ -22,6 +22,7 @@ public class UserController {
 
   private final IUserService userService;
   @PostMapping("/register")
+  // can we register an "admin" user?
   public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO userDTO,
     BindingResult result) {
     try {

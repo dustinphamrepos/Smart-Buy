@@ -1,7 +1,8 @@
+import { UserService } from './../services/user.service';
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { RegisterDTO } from '../dtos/register.dto';
 
 @Component({
   selector: 'app-register',
@@ -20,7 +21,7 @@ export class RegisterComponent {
   retypePassword: string;
   isAccepted: boolean;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private router: Router, private userService: UserService) {
     this.phone = '';
     this.fullName = '';
     this.dateOfBirth = new Date();
@@ -36,6 +37,7 @@ export class RegisterComponent {
     console.log(`Phone typed: ${this.phone}`)
   }
   register() {
+
     const message = `Phone: ${this.phone}`
       + `fullName: ${this.fullName}`
       + `dateOfBirth: ${this.dateOfBirth}`
@@ -44,9 +46,9 @@ export class RegisterComponent {
       + `retypePassword: ${this.retypePassword}`
       + `isAccepted: ${this.isAccepted}`;
     //alert(message);
+    
     debugger
-    const apiUrl = "http://localhost:8088/api/v1/users/register";
-    const registerData = {
+    const registerDTO:RegisterDTO = {
       "fullname": this.fullName,
       "phone_number": this.phone,
       "address": this.address,
@@ -57,25 +59,24 @@ export class RegisterComponent {
       "google_account_id": 0,
       "role_id": 1
     }
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    this.http.post(apiUrl, registerData, { headers }, )
-      .subscribe({
-        next: (response: any) => {
-          debugger
-          if (response && (response.status === 200 || response.status === 201)) {
-            //Registered successfully, move to login page
-            this.router.navigate(['/login']);
-          } else {
-            // before
-          }
-        },
-        complete: () => {
-            debugger
-        },
-        error: (error: any) => {
-          alert(`Cannot register, error: ${error.error}`);
+
+    this.userService.register(registerDTO).subscribe({
+      next: (response: any) => {
+        debugger
+        if (response && (response.status === 200 || response.status === 201)) {
+          //Registered successfully, move to login page
+          this.router.navigate(['/login']);
+        } else {
+          // before
         }
-      });
+      },
+      complete: () => {
+          debugger
+      },
+      error: (error: any) => {
+        alert(`Cannot register, error: ${error.error}`);
+      }
+    })
   }
 
   // check 2 password match

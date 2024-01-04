@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +20,7 @@ export class RegisterComponent {
   retypePassword: string;
   isAccepted: boolean;
 
-  constructor() {
+  constructor(private http: HttpClient, private router: Router) {
     this.phone = '';
     this.fullName = '';
     this.dateOfBirth = new Date();
@@ -27,6 +29,8 @@ export class RegisterComponent {
     this.password = '';
     this.retypePassword = '';
     this.isAccepted = false;
+
+    // inject
   }
   onPhoneChange() {
     console.log(`Phone typed: ${this.phone}`)
@@ -39,7 +43,39 @@ export class RegisterComponent {
       + `password: ${this.password}`
       + `retypePassword: ${this.retypePassword}`
       + `isAccepted: ${this.isAccepted}`;
-    alert(message);
+    //alert(message);
+    debugger
+    const apiUrl = "http://localhost:8088/api/v1/users/register";
+    const registerData = {
+      "fullname": this.fullName,
+      "phone_number": this.phone,
+      "address": this.address,
+      "password": this.password,
+      "retype_password": this.retypePassword,
+      "date_of_birth": this.dateOfBirth,
+      "facebook_account_id": 0,
+      "google_account_id": 0,
+      "role_id": 1
+    }
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post(apiUrl, registerData, { headers }, )
+      .subscribe({
+        next: (response: any) => {
+          debugger
+          if (response && (response.status === 200 || response.status === 201)) {
+            //Registered successfully, move to login page
+            this.router.navigate(['/login']);
+          } else {
+            // before
+          }
+        },
+        complete: () => {
+            debugger
+        },
+        error: (error: any) => {
+          alert(`Cannot register, error: ${error.error}`);
+        }
+      });
   }
 
   // check 2 password match
@@ -47,7 +83,7 @@ export class RegisterComponent {
     if (this.password !== this.retypePassword) {
       this.registerForm.form.controls['retypePassword'].setErrors({ 'passwordMismatch': true });
     } else {
-      this.registerForm.form.controls['retypePassword'].setErrors(null);
+      this.registerForm.form.controls['retypePassword'].setErrors({ 'passwordMismatch': false });
     }
   }
 
@@ -63,7 +99,7 @@ export class RegisterComponent {
       if (age < 18) {
         this.registerForm.form.controls['dateOfBirth'].setErrors({ 'invalidAge': true });
       } else {
-        this.registerForm.form.controls['dateOfBirth'].setErrors(null);
+        this.registerForm.form.controls['dateOfBirth'].setErrors({ 'invalidAge': false });
       }
     }
   }

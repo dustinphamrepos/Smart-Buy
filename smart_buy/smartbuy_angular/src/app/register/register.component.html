@@ -28,6 +28,7 @@
                         <input type="text"
                             class="form-control"
                             [(ngModel)]="fullName"
+                            name="fullName"
                             required
                             id="full-name">
                         <div class="divider-nospace"></div>
@@ -54,6 +55,8 @@
                         <label for="address">Địa chỉ</label>
                         <input type="text"
                             class="form-control"
+                            [(ngModel)]="address"
+                            name="address"
                             id="address">
                         <div class="divider-nospace"></div>
                     </div>
@@ -106,6 +109,7 @@
                                 <input type="checkbox"
                                     class="form-check-input"
                                     [(ngModel)]="isAccepted"
+                                    name="isAccepted"
                                     id="agree">
                                 <label class="form-check-label text-start" for="agree">
                                     Tôi đồng ý với các điều khoản và điều kiện</label>

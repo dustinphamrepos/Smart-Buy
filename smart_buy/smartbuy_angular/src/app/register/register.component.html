@@ -7,17 +7,17 @@
                 <div class="register-form mx-auto">
                     <h2 class="register-header">Đăng ký</h2>
                     <div class="form-group">
-                        <label for="phone">Phone</label>
+                        <label for="phoneNumber">Phone's number</label>
                         <input type="text"
                             class="form-control"
-                            [(ngModel)]="phone"
-                            (input)="onPhoneChange(); registerForm.form.markAsTouched()"
-                            name="phone"
+                            [(ngModel)]="phoneNumber"
+                            (input)="onPhoneNumberChange(); registerForm.form.markAsTouched()"
+                            name="phoneNumber"
                             required
-                            id="email">
+                            id="phone-number">
                         <div class="divider-nospace"></div>
                         <p class="text-danger"
-                            *ngIf="phone.length < 6 &&
+                            *ngIf="phoneNumber.length < 6 &&
                             registerForm.form.touched">
                             Phone must be at least 6 characters
                         </p>
@@ -109,7 +109,7 @@
                                 <input type="checkbox"
                                     class="form-check-input"
                                     [(ngModel)]="isAccepted"
-                                    name="isAccepted"
+                                    name="isAccepted" 
                                     id="agree">
                                 <label class="form-check-label text-start" for="agree">
                                     Tôi đồng ý với các điều khoản và điều kiện</label>
@@ -128,7 +128,7 @@
                 </div>
             </div>
         </div>
-</form>
+    </form>
 </div>
 <br/>
 <br/>

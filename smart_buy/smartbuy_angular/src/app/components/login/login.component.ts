@@ -1,8 +1,10 @@
-import { UserService } from './../services/user.service';
+import { TokenService } from './../../services/token.service';
+import { UserService } from '../../services/user.service';
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginDTO } from '../dtos/user/login.dto';
+import { LoginDTO } from '../../dtos/user/login.dto';
+import { LoginResponse } from '../../responses/user/login.response';
 
 
 @Component({
@@ -17,7 +19,11 @@ export class LoginComponent {
   phoneNumber: string = '';
   password: string = '';
 
-  constructor(private router: Router, private userService: UserService) {
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private tokenService: TokenService
+  ) {
     this.phoneNumber = '';
     this.password = '';
   }
@@ -30,7 +36,6 @@ export class LoginComponent {
 
     const message = `phoneNumber: ${this.phoneNumber}`
                   + `password: ${this.password}`
-    //alert(message);
 
     debugger
     const loginDTO:LoginDTO = {
@@ -39,14 +44,10 @@ export class LoginComponent {
     }
 
     this.userService.login(loginDTO).subscribe({
-      next: (response: any) => {
+      next: (response:LoginResponse) => {
         debugger
-        if (response && (response.status === 200 || response.status === 201)) {
-          //Registered successfully, move to login page
-          //this.router.navigate(['/login']);
-        } else {
-          // before
-        }
+        const { token } = response;
+        this.tokenService.setToken(token);
       },
       complete: () => {
           debugger

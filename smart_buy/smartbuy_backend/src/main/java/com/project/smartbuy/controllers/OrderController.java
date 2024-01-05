@@ -1,10 +1,12 @@
 package com.project.smartbuy.controllers;
 
 
+import com.project.smartbuy.components.LocalizationUtils;
 import com.project.smartbuy.dtos.OrderDTO;
 import com.project.smartbuy.exceptions.DataNotFoundException;
 import com.project.smartbuy.responses.OrderResponse;
 import com.project.smartbuy.services.IOrderService;
+import com.project.smartbuy.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
   private final IOrderService orderService;
+  private final LocalizationUtils localizationUtils;
   @PostMapping("")
   // POST http://localhost:8088/apic/orders
   public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDTO orderDTO, BindingResult result) {
@@ -74,6 +77,6 @@ public class OrderController {
   // DELETE http://localhost:8088/api/v1/orders/6
   public ResponseEntity<?> deleteOrder (@Valid @PathVariable Long id) throws DataNotFoundException {
     orderService.deleteOrder(id);
-    return ResponseEntity.ok(String.format("Order with ID = %d deleted successfully.", id));
+    return ResponseEntity.ok().body(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_ORDER_SUCCESSFULLY, id));
   }
 }

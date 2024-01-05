@@ -1,8 +1,10 @@
 package com.project.smartbuy.controllers;
 
+import com.project.smartbuy.components.LocalizationUtils;
 import com.project.smartbuy.dtos.CategoryDTO;
 import com.project.smartbuy.models.Category;
 import com.project.smartbuy.services.CategoryService;
+import com.project.smartbuy.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.List;
 public class CategoryController {
 
   private final CategoryService categoryService;
+  private final LocalizationUtils localizationUtils;
 
   @PostMapping("")
   public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult result) {
@@ -31,10 +34,16 @@ public class CategoryController {
         return ResponseEntity.badRequest().body(errorMessages);
       }
       categoryService.createCategory(categoryDTO);
-      return ResponseEntity.ok(String.format("Category '%s' created successfully.", categoryDTO.getName()));
+      return ResponseEntity.ok()
+              .body(localizationUtils
+                      .getLocalizedMessage(MessageKeys.CREATE_CATEGORY_SUCCESSFULLY, categoryDTO.getName())
+              );
     }
     catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
+      return ResponseEntity.badRequest()
+              .body(localizationUtils
+                      .getLocalizedMessage(MessageKeys.CREATE_CATEGORY_FAILED)
+              );
     }
   }
 
@@ -53,12 +62,12 @@ public class CategoryController {
     @RequestBody CategoryDTO categoryDTO
   ) {
     categoryService.updateCategory(id, categoryDTO);
-    return ResponseEntity.ok(String.format("Updated category with ID = %d successfully", id));
+    return ResponseEntity.ok().body(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_SUCCESSFULLY, id));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
     categoryService.deleteCategory(id);
-    return ResponseEntity.ok(String.format("Deleted category with ID = %d successfully", id));
+    return ResponseEntity.ok().body(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_CATEGORY_SUCCESSFULLY, id));
   }
 }

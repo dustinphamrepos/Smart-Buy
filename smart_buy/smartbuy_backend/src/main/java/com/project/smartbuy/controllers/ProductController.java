@@ -1,6 +1,7 @@
 package com.project.smartbuy.controllers;
 
 import com.github.javafaker.Faker;
+import com.project.smartbuy.components.LocalizationUtils;
 import com.project.smartbuy.dtos.ProductDTO;
 import com.project.smartbuy.dtos.ProductImageDTO;
 import com.project.smartbuy.models.Product;
@@ -8,6 +9,7 @@ import com.project.smartbuy.models.ProductImage;
 import com.project.smartbuy.responses.ProductListResponse;
 import com.project.smartbuy.responses.ProductResponse;
 import com.project.smartbuy.services.IProductService;
+import com.project.smartbuy.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,6 +41,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class ProductController {
 
   private final IProductService productService;
+  private final LocalizationUtils localizationUtils;
   @GetMapping("")
   public ResponseEntity<ProductListResponse> getProducts(
     @RequestParam("page") int page,
@@ -94,7 +97,10 @@ public class ProductController {
     Product existingProduct = productService.getProductById(productId);
     files = files == null ? new ArrayList<MultipartFile>() : files;
     if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
-      return ResponseEntity.badRequest().body(String.format("You only upload maximum %d images.", ProductImage.MAXIMUM_IMAGES_PER_PRODUCT));
+      return ResponseEntity.badRequest()
+              .body(localizationUtils.getLocalizedMessage(
+                      MessageKeys.UPLOAD_IMAGES_MAX_X, ProductImage.MAXIMUM_IMAGES_PER_PRODUCT
+              ));
     }
     List<ProductImage> productImages = new ArrayList<>();
     for (MultipartFile file : files) {
@@ -103,12 +109,14 @@ public class ProductController {
       }
       if (file.getSize() > 10 * 1024 * 1024) {
         //throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "File is too large!");
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File is too large! Maximum size is 10MB");
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(localizationUtils.getLocalizedMessage(MessageKeys.UPLOAD_IMAGES_FILE_LARGE));
       }
 
       String contentType = file.getContentType();
       if (contentType == null || !contentType.startsWith("image/")) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File must be an image!");
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(localizationUtils.getLocalizedMessage(MessageKeys.UPLOAD_IMAGES_FILE_MUST_BE_IMAGE));
       }
 
       String filename = storeFile(file);
@@ -154,7 +162,8 @@ public class ProductController {
   public  ResponseEntity<String> deleteProduct(@PathVariable("id") Long productId) {
     try {
       productService.deleteProduct(productId);
-      return ResponseEntity.ok(String.format("Product with id = %d deleted successfully.", productId));
+      return ResponseEntity.ok()
+              .body(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_PRODUCT_SUCCESSFULLY, productId));
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
@@ -181,7 +190,7 @@ public class ProductController {
         return ResponseEntity.badRequest().body(e.getMessage());
       }
     }
-    return ResponseEntity.ok("Fake products created successfully.");
+    return ResponseEntity.ok().body("Fake products created successfully");
   }
 
 }

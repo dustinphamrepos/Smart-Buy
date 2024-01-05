@@ -20,7 +20,10 @@ export class UserService {
   private apiLogin = `${environment.apiBaseUrl}/users/login`;
   
   private createHeaders(): HttpHeaders {
-    return new HttpHeaders({ 'Content-Type': 'application/json' })
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept-Language': 'en',
+    })
   }
 
   register(registerDTO:RegisterDTO): Observable<any> {

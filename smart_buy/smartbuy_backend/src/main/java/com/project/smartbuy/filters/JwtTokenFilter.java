@@ -1,6 +1,6 @@
 package com.project.smartbuy.filters;
 
-import com.project.smartbuy.components.JwtTokenUtil;
+import com.project.smartbuy.components.JwtTokenUtils;
 import com.project.smartbuy.models.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,7 +12,6 @@ import org.modelmapper.internal.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
   @Value("${api.prefix}")
   private String apiPrefix;
   private final UserDetailsService userDetailsService;
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenUtils jwtTokenUtil;
 
   @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,

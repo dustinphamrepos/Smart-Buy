@@ -1,5 +1,6 @@
 package com.project.smartbuy.controllers;
 
+import com.project.smartbuy.components.LocalizationUtils;
 import com.project.smartbuy.dtos.OrderDetailDTO;
 import com.project.smartbuy.models.OrderDetail;
 import com.project.smartbuy.responses.OrderDetailListResponse;
@@ -7,6 +8,7 @@ import com.project.smartbuy.responses.OrderDetailResponse;
 import com.project.smartbuy.responses.ProductListResponse;
 import com.project.smartbuy.responses.ProductResponse;
 import com.project.smartbuy.services.OrderDetailService;
+import com.project.smartbuy.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class OrderDetailController {
 
   private final OrderDetailService orderDetailService;
+  private final LocalizationUtils localizationUtils;
 
   @PostMapping("")
   // POST http://localhost:8088/api/v1/orders_details
@@ -79,6 +82,6 @@ public class OrderDetailController {
   // DELETE http://localhost:8088/api/v1/orders_details/1
     public ResponseEntity<String> deleteOrderDetail(@Valid @PathVariable("id") Long id) {
     orderDetailService.deleteOrderDetail(id);
-    return ResponseEntity.ok(String.format("OrderDetail with ID = %d deleted successfully.", id));
+    return ResponseEntity.ok().body(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_ORDER_DETAIL_SUCCESSFULLY, id));
   }
 }

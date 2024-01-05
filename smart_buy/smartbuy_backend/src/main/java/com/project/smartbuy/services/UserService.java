@@ -1,6 +1,6 @@
 package com.project.smartbuy.services;
 
-import com.project.smartbuy.components.JwtTokenUtil;
+import com.project.smartbuy.components.JwtTokenUtils;
 import com.project.smartbuy.dtos.UserDTO;
 import com.project.smartbuy.exceptions.DataNotFoundException;
 import com.project.smartbuy.exceptions.PermissionDenyException;
@@ -28,7 +28,7 @@ public class UserService implements IUserService{
 
   private final PasswordEncoder passwordEncoder;
 
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenUtils jwtTokenUtil;
 
   private final AuthenticationManager authenticationManager;
 

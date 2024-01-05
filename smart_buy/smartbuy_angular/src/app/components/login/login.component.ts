@@ -5,6 +5,8 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginDTO } from '../../dtos/user/login.dto';
 import { LoginResponse } from '../../responses/user/login.response';
+import { RoleService } from '../../services/role.service';
+import { Role } from '../models/role';
 
 
 @Component({
@@ -18,18 +20,36 @@ export class LoginComponent {
   @ViewChild('loginForm') loginForm!: NgForm;
   phoneNumber: string = '';
   password: string = '';
+  roles: Role[] = [];
+  selectedRole: Role | undefined;
 
   constructor(
     private router: Router,
     private userService: UserService,
-    private tokenService: TokenService
-  ) {
-    this.phoneNumber = '';
-    this.password = '';
-  }
+    private tokenService: TokenService,
+    private roleService: RoleService
+  ) { }
 
   onPhoneNumberChange() {
     console.log(`Phone typed: ${this.phoneNumber}`)
+  }
+
+  ngOnInit() {
+    debugger
+    this.roleService.getRoles().subscribe({
+      next: (roles: Role[]) => {
+        debugger
+        this.roles = roles;
+        this.selectedRole = roles.length > 0 ? roles[0] : undefined;
+      },
+      complete: () => {
+        debugger
+      },  
+      error: (error: any) => {
+        debugger
+        alert(error.error.message);
+      }
+    });
   }
 
   login() {

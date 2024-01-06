@@ -12,10 +12,12 @@ import com.project.smartbuy.services.IProductService;
 import com.project.smartbuy.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -131,6 +133,22 @@ public class ProductController {
   private boolean isImageFile(MultipartFile file) {
     String contentType = file.getContentType();
     return contentType != null && contentType.startsWith("image/");
+  }
+
+  @GetMapping("/images/{imageName}")
+  public ResponseEntity<?> viewImage(@PathVariable String imageName) {
+    try {
+      Path imagePath = Paths.get("uploads/" + imageName);
+      UrlResource resource = new UrlResource(imagePath.toUri());
+
+      if (resource.exists()) {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
+      } else {
+        return ResponseEntity.notFound().build();
+      }
+    } catch (Exception e) {
+      return ResponseEntity.notFound().build();
+    }
   }
 
   private String storeFile(MultipartFile file) throws IOException {

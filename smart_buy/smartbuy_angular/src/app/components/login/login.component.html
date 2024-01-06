@@ -34,9 +34,13 @@
                     <div class="form-group">
                         <div class="form-check checkbox-text">
                             <span style="display: flex;">
-                                <input type="checkbox" class="form-check-input" id="remember">
+                                <input type="checkbox"
+                                    class="form-check-input"
+                                    [(ngModel)]="rememberMe"
+                                    id="remember">
                                 <label class="form-check-label text-start" for="remember">
-                                    Remember login</label>
+                                    Remember login
+                                </label>
                             </span>
                             <a href="#" class="register-link">Forgot password</a>
                         </div>

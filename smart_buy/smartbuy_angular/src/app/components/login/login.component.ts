@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { LoginDTO } from '../../dtos/user/login.dto';
 import { LoginResponse } from '../../responses/user/login.response';
 import { RoleService } from '../../services/role.service';
-import { Role } from '../models/role';
+import { Role } from '../../models/role';
 
 
 @Component({
@@ -22,6 +22,7 @@ export class LoginComponent {
   password: string = '';
   roles: Role[] = [];
   selectedRole: Role | undefined;
+  rememberMe: boolean = true;
 
   constructor(
     private router: Router,
@@ -64,18 +65,20 @@ export class LoginComponent {
     }
 
     this.userService.login(loginDTO).subscribe({
-      next: (response:LoginResponse) => {
+      next: (response: LoginResponse) => {
         debugger
         const { token } = response;
-        this.tokenService.setToken(token);
+        if (this.rememberMe) {
+          this.tokenService.setToken(token);
+        }
       },
       complete: () => {
-          debugger
+        debugger;
       },
       error: (error: any) => {
         alert(`Cannot login, error: ${error.error}`);
       }
-    })
+    });
   }
 }
 
